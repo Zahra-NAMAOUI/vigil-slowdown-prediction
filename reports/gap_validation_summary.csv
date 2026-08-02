@@ -1,0 +1,14 @@
+summary_type,old_classification,revised_classification,gap_count,percentage_of_all_gaps
+revised_class_count,,collection_delay_sensor_timeout,294,82.3529
+revised_class_count,,small_sampling_delay,23,6.4426
+revised_class_count,,likely_pause_or_sleep,3,0.8403
+revised_class_count,,weak_resource_pressure,37,10.3641
+revised_class_count,,strong_resource_pressure,0,0.0
+revised_class_count,,insufficient_evidence,0,0.0
+old_to_revised,likely_pause_or_sleep,likely_pause_or_sleep,1,0.2801
+old_to_revised,possible_slowdown,collection_delay_sensor_timeout,285,79.8319
+old_to_revised,possible_slowdown,likely_pause_or_sleep,2,0.5602
+old_to_revised,possible_slowdown,small_sampling_delay,6,1.6807
+old_to_revised,possible_slowdown,weak_resource_pressure,37,10.3641
+old_to_revised,small_sampling_delay,collection_delay_sensor_timeout,9,2.521
+old_to_revised,small_sampling_delay,small_sampling_delay,17,4.7619

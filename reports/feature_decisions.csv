@@ -1,0 +1,40 @@
+column_name,final_role,keep_in_reference_dataset,use_as_initial_model_feature,action,reason,needs_manual_review
+id,metadata,yes,no,retain_for_traceability,Unique row identifier; useful for traceability but would encourage memorization if used as a predictor.,no
+run_id,grouping_time,yes,no,use_for_group_splitting,"Run identifier should define grouped train/validation splits and preserve run membership, not act as a direct feature.",no
+machine_id,metadata,yes,no,use_for_group_splitting,Machine identifier is needed for traceability and machine-aware validation but should not be learned as a direct predictor.,no
+timestamp,grouping_time,yes,no,use_for_ordering_and_splitting,Timestamp preserves observation order and supports time-aware validation; raw timestamps are excluded initially.,no
+elapsed_seconds,grouping_time,yes,no,review_prediction_timing,Time since run start may describe sequence position but could also become a derived feature depending on the prediction moment.,yes
+phase,constant_unusable,yes,no,exclude_from_modeling,"The only observed value is monitor, so the column has no variation in this dataset.",no
+stress_cpu_target_pct,constant_unusable,yes,no,exclude_from_modeling,The column is 100% missing and cannot provide an initial model signal.,no
+stress_memory_target_mb,constant_unusable,yes,no,exclude_from_modeling,The column is 100% missing and cannot provide an initial model signal.,no
+cpu_pct,candidate_feature,yes,yes,include_initial_feature,Direct CPU utilization measurement with complete coverage across machines and runs.,no
+cpu_per_core_json,structured_feature,yes,no,derive_structured_features_later,The JSON contains per-core measurements but raw JSON strings are not model-ready; define stable aggregate features first.,yes
+cpu_frequency_mhz,candidate_feature,yes,yes,include_initial_feature,Numeric CPU operating-frequency measurement with complete group coverage.,no
+ram_pct,candidate_feature,yes,yes,include_initial_feature,Direct memory utilization measurement with complete coverage across machines and runs.,no
+ram_used_mb,candidate_feature,yes,yes,include_initial_feature,Numeric memory-use measurement that may capture resource pressure.,no
+ram_available_mb,candidate_feature,yes,yes,include_initial_feature,Numeric available-memory measurement that may capture remaining capacity.,no
+swap_pct,candidate_feature,yes,yes,include_initial_feature,Direct swap utilization measurement with complete group coverage.,no
+swap_used_mb,candidate_feature,yes,yes,include_initial_feature,Numeric swap-use measurement that may capture sustained memory pressure.,no
+disk_usage_pct,candidate_feature,yes,yes,include_initial_feature,Direct disk-capacity utilization measurement with complete coverage.,no
+disk_free_gb,candidate_feature,yes,yes,include_initial_feature,Numeric free-disk-capacity measurement that may affect system behavior.,no
+disk_read_mb_s,candidate_feature,yes,yes,include_initial_feature,Disk read throughput has only 0.0354% missing values and is available in every machine and run.,no
+disk_write_mb_s,candidate_feature,yes,yes,include_initial_feature,Disk write throughput has only 0.0322% missing values and is available in every machine and run.,no
+disk_latency_ms,candidate_feature,yes,yes,include_initial_feature,Disk latency has only 0.0354% missing values and may capture storage bottlenecks.,no
+net_sent_mb_s,candidate_feature,yes,yes,include_initial_feature,Network send throughput has only 0.0322% missing values and full group coverage.,no
+net_recv_mb_s,candidate_feature,yes,yes,include_initial_feature,Network receive throughput has only 0.0322% missing values and full group coverage.,no
+network_latency_ms,candidate_feature,yes,yes,review_missingness_strategy,"Network latency may be predictive and exists in every group, but 17.3991% row-level missingness needs an explicit modeling strategy.",yes
+process_count,candidate_feature,yes,yes,include_initial_feature,Process count is a complete numeric workload measurement.,no
+thread_count,candidate_feature,yes,yes,include_initial_feature,Thread count is a complete numeric workload measurement.,no
+context_switches_per_s,candidate_feature,yes,yes,review_missingness_strategy,"Context-switch rate may reflect workload pressure, but 23.9126% row-level missingness requires validation.",yes
+temperature_c,optional_feature,yes,no,evaluate_optional_sensor,"Temperature may be useful, but it is missing for 40.9736% of rows and entirely unavailable on one of three machines.",yes
+gpu_usage_pct,optional_feature,yes,no,evaluate_optional_sensor,"GPU use may be useful, but it is missing for 39.8789% of rows and entirely unavailable on one of three machines.",yes
+gpu_per_device_json,structured_feature,yes,no,derive_structured_features_later,"The JSON may contain useful per-device information, but raw JSON strings should not be passed directly to a model.",yes
+battery_pct,candidate_feature,yes,yes,include_initial_feature,Battery level is a complete numeric operating-context measurement.,no
+battery_plugged,candidate_feature,yes,yes,include_initial_feature,Power-source state is a complete binary operating-context measurement.,no
+sensor_errors_json,diagnostic,yes,no,retain_for_quality_checks,Sensor-error details explain missing or unreliable measurements but raw diagnostic JSON is not an initial predictor.,no
+missed_deadline,diagnostic,yes,no,consider_lagged_feature_after_target_review,This event can diagnose prior performance and might be usable only from a strictly past window; its relationship to the future target must be defined.,yes
+legacy_id,constant_unusable,yes,no,exclude_from_modeling,The column is 100% missing and cannot provide an initial model signal.,no
+sample_reliable,diagnostic,yes,no,use_for_quality_policy,"Reliability is a data-quality indicator suitable for filtering or evaluation policy, not an initial predictor by default.",yes
+status,leakage_risk,yes,no,exclude_from_modeling,Run status may reveal information available only during or after the prediction outcome.,no
+ended_at_utc,leakage_risk,yes,no,exclude_from_modeling,"Run end time is post-run information and is unavailable for some runs, so it must not be an initial predictor.",no
+run_complete,leakage_risk,yes,no,exclude_from_modeling,Completion state directly describes a run outcome and can leak future information.,no

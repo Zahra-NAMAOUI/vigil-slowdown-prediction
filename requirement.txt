@@ -1,0 +1,7 @@
+psutil
+scikit-learn
+xgboost
+lightgbm
+jupyter
+ipykernel
+pandas

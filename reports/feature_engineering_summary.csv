@@ -1,0 +1,2 @@
+total_input_rows,total_output_rows,raw_candidate_feature_count,generated_feature_count,total_model_feature_count,valid_5min_label_count,positive_target_count,negative_target_count,positive_target_percentage,machine_count,run_count,segment_count,rows_with_insufficient_120s_history_input,rows_with_insufficient_120s_history_output,data_leakage_risk_detected
+31059,26036,20,223,243,26036,3643,22393,13.9922,3,10,33,2355,1351,False

@@ -1,0 +1,4 @@
+machine_id,total_rows,slowdown_now_positive_rows,valid_5min_rows,invalid_5min_rows,positive_5min_rows,negative_5min_rows,positive_5min_percentage,valid_10min_rows,invalid_10min_rows,positive_10min_rows,negative_10min_rows,positive_10min_percentage
+0890dcc046c079acc4de4202,12386,114,11933,453,600,11333,5.0281,11484,902,1051,10433,9.1519
+7232bc533c21ce408d45d473,7979,966,4197,3782,1188,3009,28.3059,2178,5801,873,1305,40.0826
+a0f8c86097e55fbfa506d057,10694,851,9906,788,1855,8051,18.726,9318,1376,2335,6983,25.059
