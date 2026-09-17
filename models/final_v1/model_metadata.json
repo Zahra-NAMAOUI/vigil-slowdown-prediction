@@ -1,0 +1,104 @@
+{
+  "model_name": "LightGBM",
+  "model_role": "frozen_baseline_final_v1_prototype",
+  "task": "slowdown_in_5min prediction",
+  "created_at_utc": "2026-08-14T21:27:07.551618+00:00",
+  "dataset": {
+    "cleaned_measurements": 153521,
+    "valid_modeling_rows": 133016,
+    "machines": 4,
+    "modeling_runs": 55,
+    "candidate_features": 243,
+    "retained_original_features": 228,
+    "transformed_features": 360
+  },
+  "artifacts": {
+    "model_path": "models/baseline/lightgbm.joblib",
+    "tree_preprocessor_path": "models/preprocessing/tree_preprocessor.joblib",
+    "feature_metadata_path": "reports/preprocessing_feature_report.csv",
+    "x_test_path": "data/modeling/preprocessed/X_test_tree.csv",
+    "model_sha256": "88092c761b876f94b4e6ceca3a3fc17c3f8700d598a1e1331807fbf020341812",
+    "preprocessor_sha256": "d0d1f8d2579d188af632f5b2ef15cc98eb00e53900a94cb7c50c423c63186d93"
+  },
+  "model_parameters": {
+    "boosting_type": "gbdt",
+    "class_weight": null,
+    "colsample_bytree": 1.0,
+    "importance_type": "split",
+    "learning_rate": 0.05,
+    "max_depth": -1,
+    "min_child_samples": 20,
+    "min_child_weight": 0.001,
+    "min_split_gain": 0.0,
+    "n_estimators": 300,
+    "n_jobs": -1,
+    "num_leaves": 31,
+    "objective": "binary",
+    "random_state": 42,
+    "reg_alpha": 0.0,
+    "reg_lambda": 0.0,
+    "subsample": 1.0,
+    "subsample_for_bin": 200000,
+    "subsample_freq": 0,
+    "scale_pos_weight": 1.938506277040925,
+    "verbosity": -1
+  },
+  "decision_threshold": 0.5,
+  "threshold_status": "prototype/development reference; not optimized or validated for production",
+  "score_contract": {
+    "raw_model_score": "predict_proba(X)[:, 1]",
+    "risk_score": "100 * raw_model_score",
+    "display_wording": "Model risk score for slowdown in the next 5 minutes",
+    "calibration_warning": "Do not describe as a perfectly calibrated probability."
+  },
+  "rule_c_reference": {
+    "notebooks": [
+      "notebooks/06_label_definition.ipynb",
+      "notebooks/07_future_label_creation.ipynb"
+    ],
+    "description": "Provisional Rule C: one sustained severe resource signal or at least two sustained moderate resource-group signals; future target searches strictly within segment over five minutes."
+  },
+  "final_test_metrics": {
+    "evaluation": "final_untouched_test",
+    "threshold": 0.5,
+    "rows": 27944,
+    "positive_rows": 11356,
+    "negative_rows": 16588,
+    "positive_rate": 0.40638419696535927,
+    "pr_auc": 0.9519355443954055,
+    "roc_auc": 0.9548768151508158,
+    "precision": 0.8154349349739117,
+    "recall": 0.9220676294469884,
+    "f1": 0.8654791916353267,
+    "accuracy": 0.8835170340681363,
+    "balanced_accuracy": 0.8895966312173451,
+    "specificity": 0.857125632987702,
+    "tn": 14218,
+    "fp": 2370,
+    "fn": 885,
+    "tp": 10471,
+    "predicted_positive_rate": 0.45952619524763816,
+    "threshold_status": "fixed_prototype_development_reference_not_production_optimized"
+  },
+  "run_stability": {
+    "informative_runs": 7,
+    "strongest_run_id": "03b262cc-46f0-4837-a184-1eea22fdfdd0",
+    "strongest_run_pr_auc": 1.0,
+    "weakest_informative_run_id": "795ee584-86ed-4fe5-b317-3d022b850274",
+    "weakest_informative_run_machine": "0890dcc046c079acc4de4202",
+    "minimum_informative_run_pr_auc": 0.0569898361809545,
+    "minimum_informative_run_recall": 0.0,
+    "mean_informative_run_pr_auc": 0.6334786301566163,
+    "std_informative_run_pr_auc": 0.37416770328013754
+  },
+  "known_limitations": [
+    "Experimental/prototype system.",
+    "Performance varies between machine/run operating regimes.",
+    "Distribution-shift analysis found strong covariate shift and possible concept drift.",
+    "Current data supports a project prototype/demo but not production-grade reliability across arbitrary machines.",
+    "Future improvement requires representative data from diverse operating regimes rather than only more hyperparameter tuning.",
+    "Threshold 0.50 is a fixed demo reference and is not production optimized.",
+    "Risk score is not guaranteed to be a calibrated probability."
+  ],
+  "post_test_policy": "No model, hyperparameter, preprocessing, feature engineering, split, Rule C, threshold, or calibration changes may be made based on this test evaluation."
+}
