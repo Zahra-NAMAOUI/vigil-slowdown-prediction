@@ -1,0 +1,2 @@
+evaluation,threshold,rows,positive_rows,negative_rows,positive_rate,pr_auc,roc_auc,precision,recall,f1,accuracy,balanced_accuracy,specificity,tn,fp,fn,tp,predicted_positive_rate,threshold_status
+final_untouched_test,0.5,27944,11356,16588,0.40638419696535927,0.9519355443954055,0.9548768151508158,0.8154349349739117,0.9220676294469884,0.8654791916353267,0.8835170340681363,0.8895966312173451,0.857125632987702,14218,2370,885,10471,0.45952619524763816,fixed_prototype_development_reference_not_production_optimized

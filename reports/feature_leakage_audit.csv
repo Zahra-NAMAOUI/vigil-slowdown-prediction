@@ -1,0 +1,12 @@
+feature_or_rule,status,reason,risk_level
+forbidden target/identifier columns,pass,Found: [],none
+suspicious future/target tokens,pass,Found: [],none
+Rule C intermediate features,pass,Found: [],none
+exact target or inverse-target value proxy,pass,Found: [],none
+rolling_windows_not_centered,pass,Implementation satisfies the causal check.,none
+no_negative_shift,pass,Implementation satisfies the causal check.,none
+explicit_sequence_boundaries,pass,Implementation satisfies the causal check.,none
+rolling_grouped_by_sequence,pass,Implementation satisfies the causal check.,none
+differences_grouped_by_sequence,pass,Implementation satisfies the causal check.,none
+past_window_right_closed,pass,Implementation satisfies the causal check.,none
+sampled_past_window_assertion,pass,Implementation satisfies the causal check.,none

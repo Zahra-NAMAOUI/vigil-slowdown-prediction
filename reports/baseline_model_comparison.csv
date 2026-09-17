@@ -1,0 +1,2 @@
+model,preprocessing_type,threshold,accuracy,balanced_accuracy,precision,recall,f1,roc_auc,pr_auc,tn,fp,fn,tp,training_time_seconds,prediction_time_seconds
+LightGBM,tree: median + indicators,0.5,0.8990635692418513,0.8990737732791515,0.8953944368445053,0.8996609548245212,0.8975226254685071,0.9588678123147418,0.9689882774636283,10152,1147,1095,9818,4.99737012499827,0.06626966698968317

@@ -1,0 +1,15 @@
+section,metric,value,interpretation
+scope,feature_dataset_rows,133016,Current 153k experiment; development-only diagnostics
+quality,difficult_run_classification,A_likely_valid_real_regime,Compared with preceding development neighbors; no automatic removal
+shift,problem_classification,B_possible_concept_drift_with_strong_covariate_shift,Based on overall and target-conditional shift plus data quality
+shift,median_top20_overall_shift,7.04369128571766,Composite |SMD| + capped PSI + KS
+shift,median_top20_positive_shift,6.642893113637518,Train positives versus difficult-run positives
+shift,median_top20_negative_shift,7.387619491740995,Train negatives versus difficult-run negatives
+rule_c,dominant_difficult_positive_pressures,"moderate_ram, moderate_context, moderate_cpu",Exact unchanged Rule C component frequencies
+rule_c,future_positive_current_rule_c_alignment_gap_percentage_points,36.46980691327697,Training-positive minus difficult-positive current pressure alignment
+probability,difficult_positive_below_0_2_rate,0.3010875787063538,Confidently low probability among actual positives
+machine,machine_0890_run_positive_rate_range,0.0000–1.0000,Development runs only
+machine,machine_a0f8_run_positive_rate_range,0.0000–1.0000,Development runs only
+decision,practical_completion_path,PATH_4_keep_experimental_prototype_and_proceed_carefully_to_demo,Recommendation only; not implemented
+decision,another_model_cycle_required,not_for_project_completion_collect_more_regimes_before_production,No retraining or tuning performed
+guardrail,test_model_performance_used,False,No test predictions or labels loaded

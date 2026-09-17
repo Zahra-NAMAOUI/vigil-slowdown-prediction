@@ -1,0 +1,21 @@
+model,importance_type,rank,feature_name,value,interpretation_note
+LightGBM,split_importance,1,battery_pct,564.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,2,disk_free_gb,341.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,3,swap_used_mb,256.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,4,context_switches_per_s_min_120s,178.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,5,process_count_max_120s,172.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,6,network_latency_ms_max_120s,171.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,7,thread_count_min_120s,156.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,8,net_recv_mb_s_max_120s,156.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,9,ram_pct_min_120s,147.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,10,network_latency_ms_min_120s,144.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,11,disk_write_mb_s_max_120s,139.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,12,process_count_min_120s,126.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,13,swap_pct_max_30s,125.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,14,cpu_pct_min_120s,124.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,15,ram_pct_max_120s,123.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,16,disk_read_mb_s_max_120s,123.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,17,disk_latency_ms_max_120s,122.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,18,cpu_pct_max_120s,116.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,19,disk_write_mb_s_min_120s,115.0,Feature importance describes model association and does not prove causality.
+LightGBM,split_importance,20,network_latency_ms_mean_120s,114.0,Feature importance describes model association and does not prove causality.

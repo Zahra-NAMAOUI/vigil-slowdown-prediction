@@ -1,0 +1,5 @@
+machine_id,level,model,rows,positive_count,negative_count,positive_rate,pr_auc,roc_auc,accuracy,precision,recall,f1,tn,fp,fn,tp,extremely_small_group,single_class_group,substantially_weaker_pr_auc,unusually_poor_recall,dominates_validation_rows,dominates_validation_positives
+0890dcc046c079acc4de4202,machine,LightGBM,3024,0,3024,0.0,0.0,,0.9755291005291006,0.0,0.0,0.0,2950,74,0,0,False,True,True,True,False,False
+7232bc533c21ce408d45d473,machine,LightGBM,2304,884,1420,0.3836805555555556,0.8361770397459256,0.8456113377095149,0.7413194444444444,0.6210084033613446,0.8359728506787331,0.712632594021215,969,451,145,739,False,False,True,False,False,False
+a0f8c86097e55fbfa506d057,machine,LightGBM,8607,1752,6855,0.20355524573021958,0.5744657179686163,0.7462621857191863,0.8177065179505054,0.5641205325858444,0.4594748858447489,0.5064485687323057,6233,622,947,805,False,False,True,True,False,False
+d588df123ac0d0ce20b112ac,machine,LightGBM,8277,8277,0,1.0,1.0,,0.9996375498368975,1.0,0.9996375498368975,0.9998187420699656,0,0,3,8274,False,True,False,False,False,True

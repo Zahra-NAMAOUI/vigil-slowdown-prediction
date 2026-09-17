@@ -1,0 +1,16 @@
+section,metric,value,interpretation
+model,final_model,Existing frozen baseline LightGBM,No retraining or post-test model selection
+threshold,decision_threshold,0.5,Fixed prototype/development reference; not production optimized
+test,pr_auc,0.9519355443954055,Primary ranking metric
+test,roc_auc,0.9548768151508158,Final untouched-test ROC-AUC
+test,precision,0.8154349349739117,At threshold 0.50
+test,recall,0.9220676294469884,At threshold 0.50
+test,f1,0.8654791916353267,At threshold 0.50
+test,false_negatives,885,Real next-five-minute slowdowns missed
+test,false_positives,2370,False alerts generated
+robustness,weakest_informative_run,795ee584-86ed-4fe5-b317-3d022b850274,PR-AUC=0.056990; machine=0890dcc046c079acc4de4202
+robustness,run_pr_auc_std,0.37416770328013754,Variation across informative mixed-class test runs
+limitation,distribution_shift,B_possible_concept_drift_with_strong_covariate_shift,Known strong covariate shift and possible concept drift
+status,v1_status,experimental_prototype,"Suitable for project prototype/demo, not production-grade reliability"
+future,required_improvement,more_representative_diverse_operating_regime_data,Additional tuning alone is not sufficient
+guardrail,post_test_changes,none,"No model, preprocessing, feature, split, label, calibration, or threshold changes"
