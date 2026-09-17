@@ -1,7 +1,15 @@
-psutil
-scikit-learn
-xgboost
-lightgbm
+# Runtime — dashboard
+numpy==2.5.1
+pandas==3.0.3
+scipy==1.18.0
+scikit-learn==1.9.0
+lightgbm==4.6.0
+joblib==1.5.3
+psutil==7.2.2
+streamlit==1.61.1
+altair==6.2.2
+
+# Notebooks only
+matplotlib==3.11.1
 jupyter
 ipykernel
-pandas
