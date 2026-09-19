@@ -1,0 +1,587 @@
+/* Vigil — sidebar shell. Dark only, flat: no gradients on surfaces,
+   no glow, no drop shadows, no 3D. Tailwind (Play CDN) covers a little
+   spacing; everything structural and bespoke lives here.
+
+   Every colour in this file is defined once, on :root below.
+   Nothing beyond this block hardcodes a colour value. */
+
+:root {
+  color-scheme: dark;
+
+  /* ── surfaces ── */
+  --page: #0A0F0D;
+  --card: #121816;
+  --line: #222B27;
+
+  /* ── type ── */
+  --ink: #F2F5F4;              /* text primary   */
+  --text-secondary: #9BA5A1;   /* text secondary */
+  --muted: #667069;            /* text muted     */
+  --white: #FFFFFF;
+
+  /* ── semantic ── */
+  --accent: #35C6D0;
+  --success: #2FBF8F;
+  --warn: #D99827;
+  --danger: #D95361;
+
+  /* ── chart series ── */
+  --cpu: #22B8C3;
+  --ram: #7C70E8;
+  --swap: #D99827;
+  --disk: #DF7B27;
+  --risk: #D95361;
+
+  /* ── derived tones ── */
+  --sidebar: #0C1210;
+  --surface-active: #171E1B;   /* active nav fill        */
+  --surface-hover: #1B2320;    /* nav hover fill         */
+  --track: #1E2724;            /* progress / bar tracks  */
+  --track-soft: #1A211E;       /* driver track           */
+  --line-soft: #1B221F;        /* softer hairline        */
+  --accent-hover: #55D3DC;
+  --on-accent: #04120F;        /* text on an accent fill */
+  --on-danger: #120405;        /* text on a danger fill  */
+  --danger-border: rgba(217, 83, 97, 0.45);
+  /* The sidebar dot never takes a status colour, so its pulse is teal. */
+  --pulse: rgba(53, 198, 208, 0.5);
+  --pulse-fade: rgba(53, 198, 208, 0);
+
+  /* ── backdrop: teal-tinted, very subtle ── */
+  --grid-line: rgba(53, 198, 208, 0.042);
+  --vignette: rgba(2, 9, 8, 0.72);
+  --vignette-fade: rgba(2, 9, 8, 0);
+
+  --sidebar-width: 280px;
+
+  /* Set from app.js: follows the risk band. */
+  --risk-color: var(--accent);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A Tailwind display class would otherwise beat the user-agent [hidden] rule. */
+[hidden] { display: none !important; }
+
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+.mono { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* ─────────────── backdrop: 1px grid + top-right vignette ─────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 52px 52px, 52px 52px;
+}
+
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(760px 540px at 100% 0%, var(--vignette), var(--vignette-fade) 68%);
+}
+
+/* ─────────────── shell ─────────────── */
+
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+/* ─────────────── sidebar ─────────────── */
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.75rem 1.1rem 1.4rem;
+  border-right: 1px solid var(--line);
+  background: var(--sidebar);
+}
+
+.brand { display: flex; align-items: center; gap: 0.7rem; padding: 0 0.6rem; }
+.brand-mark { width: 22px; height: 22px; fill: var(--accent); flex: none; }
+.brand-word { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); }
+
+.nav { display: flex; flex-direction: column; gap: 0.25rem; }
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.68rem 0.85rem;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.895rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 130ms ease, color 130ms ease;
+}
+
+.nav-item:hover { background: var(--surface-hover); color: var(--ink); }
+
+.nav-item.is-active {
+  background: var(--surface-active);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Bright accent bar on the left edge of the active item. */
+.nav-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+}
+
+.nav-badge {
+  flex: none;
+  min-width: 1.35rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: var(--on-danger);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar-foot {
+  margin-top: auto;
+  padding: 1.1rem 0.85rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.sidebar-machine { display: flex; align-items: center; gap: 0.55rem; }
+.sidebar-state { margin-top: 0.45rem; font-size: 0.9rem; font-weight: 600; color: var(--white); }
+.sidebar-id { margin-top: 0.2rem; font-size: 0.72rem; color: var(--muted); }
+
+/* ─────────────── shared atoms ─────────────── */
+
+.eyebrow {
+  font-size: 0.665rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 9px; height: 9px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--muted);
+  display: inline-block;
+}
+
+/* Status colours (success / warning / danger) never reach this dot: it is teal
+   whenever collection is live, muted when it is not, and the state is spelled
+   out in the label beside it. */
+.status-dot.is-running,
+.status-dot.is-starting,
+.status-dot.is-alert { background: var(--accent); }
+
+/* The single alert animation: slow, never a flash. */
+.status-dot.is-alert { animation: slow-pulse 2.4s ease-in-out infinite; }
+
+@keyframes slow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--pulse); }
+  50%      { box-shadow: 0 0 0 6px var(--pulse-fade); }
+}
+
+@media (prefers-reduced-motion: reduce) { .status-dot.is-alert { animation: none; } }
+
+.btn {
+  border-radius: 9px;
+  padding: 0.6rem 1.15rem;
+  font: inherit;
+  font-size: 0.855rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 40px;
+  transition: background-color 130ms ease, border-color 130ms ease;
+}
+
+.btn-primary { background: var(--accent); color: var(--on-accent); }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-secondary:hover:not(:disabled) { border-color: var(--text-secondary); }
+.btn-ghost {
+  background: transparent; color: var(--text-secondary); border-color: var(--line);
+  padding: 0.4rem 0.8rem; min-height: 32px; font-size: 0.78rem;
+}
+.btn-ghost:hover { color: var(--ink); border-color: var(--text-secondary); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.status-pill {
+  display: inline-block;
+  padding: 0.28rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.755rem;
+  font-weight: 600;
+  color: var(--risk-color);
+  border: 1px solid var(--risk-color);
+  transition: color 200ms linear, border-color 200ms linear;
+}
+
+.status-pill.is-accent { color: var(--accent); border-color: var(--accent); }
+
+.empty { font-size: 0.875rem; color: var(--text-secondary); margin: 0; }
+
+/* ─────────────── content ─────────────── */
+
+.content {
+  min-width: 0;
+  padding: 2.1rem 2.75rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.page-title {
+  margin: 0.4rem 0 0;
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.rule { height: 1px; background: var(--line); margin: 1.5rem 0 1.85rem; }
+
+.page { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.page-footer {
+  margin-top: auto;
+  padding-top: 2.25rem;
+  font-size: 0.73rem;
+  color: var(--muted);
+}
+
+/* ─────────────── cards ─────────────── */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.5rem 1.65rem;
+}
+
+.card-quiet { background: transparent; }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-title { margin: 0; font-size: 0.97rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.card-sub { margin: -0.6rem 0 1.2rem; font-size: 0.79rem; line-height: 1.6; color: var(--text-secondary); }
+
+.card-foot {
+  margin: 1.4rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.755rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ─────────────── hero ─────────────── */
+
+.hero {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 1.9rem 2rem;
+}
+
+.hero-arc { position: relative; width: 240px; }
+.hero-body { min-width: 0; }
+
+.gauge { width: 100%; height: auto; display: block; }
+
+.gauge-track {
+  fill: none; stroke: var(--line); stroke-width: 12; stroke-linecap: round;
+  /* 75% of the 565.487 circumference: a 270-degree arc opening at the bottom. */
+  stroke-dasharray: 424.115 565.487;
+}
+
+.gauge-value {
+  fill: none; stroke: var(--risk-color); stroke-width: 12; stroke-linecap: round;
+  stroke-dasharray: 0 565.487;
+  transition: stroke 200ms linear;
+}
+
+.gauge-value.is-accent { stroke: var(--accent); transition: stroke-dasharray 300ms linear; }
+
+.gauge-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding-bottom: 7%;
+  pointer-events: none;
+}
+
+.gauge-number {
+  font-size: 4.3rem;         /* ~69px */
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.gauge-unit { margin-top: 0.4rem; font-size: 0.78rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+.hero-headline { margin: 0.5rem 0 0; font-size: 1.28rem; font-weight: 600; letter-spacing: -0.015em; color: var(--ink); }
+.hero-note { margin: 0.6rem 0 0; max-width: 54ch; font-size: 0.84rem; line-height: 1.65; color: var(--text-secondary); }
+
+.hero-session {
+  display: flex; align-items: baseline; gap: 0.7rem;
+  margin: 1.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ─────────────── labelled progress bar ─────────────── */
+
+.bar-block { margin-top: 1.5rem; max-width: 34rem; }
+.bar-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+.bar-value { font-size: 0.78rem; color: var(--ink); }
+
+.bar-track { position: relative; height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  background: var(--risk-color);
+  transition: width 200ms linear, background-color 200ms linear;
+}
+
+.bar-fill.is-accent { background: var(--accent); }
+.bar-tick { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--muted); }
+
+/* ─────────────── metric tiles ─────────────── */
+
+.tile-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.85rem; }
+.tile-row-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.tile-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.85rem; }
+
+.tile {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.05rem 1.1rem;
+  min-width: 0;
+}
+
+.tile-row > .tile { background: var(--card); }
+
+.tile-value {
+  margin-top: 0.55rem;
+  font-size: 1.95rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile-unit { margin-left: 0.25rem; font-size: 0.72rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0; }
+
+.tile-bar { margin-top: 0.85rem; height: 3px; border-radius: 2px; background: var(--track); overflow: hidden; }
+.tile-bar > span { display: block; height: 100%; border-radius: 2px; background: var(--accent); transition: width 200ms linear; }
+
+/* Metrics with no bounded scale carry no bar: an empty track would read as zero. */
+.tile-bar.is-unscaled { background: transparent; }
+
+/* ─────────────── key/value list ─────────────── */
+
+.kv-list { margin: 0; }
+.kv-list > div {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 2rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.kv-list > div:last-child { border-bottom: 0; }
+.kv-list dt { font-size: 0.745rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); flex: none; }
+.kv-list dd { margin: 0; font-size: 0.85rem; color: var(--ink); text-align: right; min-width: 0; line-height: 1.55; }
+.kv-tight { margin-top: 1.35rem; padding-top: 0.25rem; border-top: 1px solid var(--line); }
+.kv-tight dd { color: var(--text-secondary); }
+
+/* ─────────────── drivers ─────────────── */
+
+.driver-list { display: flex; flex-direction: column; gap: 0.95rem; }
+.driver-row { display: grid; grid-template-columns: 11rem 1fr 6.5rem; align-items: center; gap: 1.1rem; }
+.driver-label { font-size: 0.85rem; color: var(--ink); }
+.driver-track { position: relative; height: 18px; border-radius: 4px; background: var(--track-soft); }
+.driver-track::after {
+  content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--line);
+}
+.driver-bar { position: absolute; top: 3px; bottom: 3px; border-radius: 3px; transition: left 200ms linear, width 200ms linear; }
+.driver-value { text-align: right; font-size: 0.79rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+/* ─────────────── events ─────────────── */
+
+.event-list { display: flex; flex-direction: column; }
+
+.event-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.event-row:first-child { padding-top: 0; }
+.event-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.event-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--danger); margin-top: 0.42rem; }
+.event-meta { display: flex; align-items: baseline; gap: 0.7rem; }
+.event-time { font-size: 0.75rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.event-severity { font-size: 0.665rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--danger); }
+.event-title { margin: 0.35rem 0 0; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+.event-body { margin: 0.28rem 0 0; font-size: 0.815rem; color: var(--text-secondary); }
+.event-detail { margin: 0.7rem 0 0; font-size: 0.735rem; line-height: 1.7; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ─────────────── performance table ─────────────── */
+
+.table-wrap { overflow-x: auto; }
+.perf-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+
+.perf-table th {
+  text-align: right;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.655rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.perf-table td {
+  text-align: right;
+  padding: 0.7rem 0.8rem;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.perf-table td:first-child, .perf-table th:first-child { text-align: left; }
+.perf-table tbody tr:last-child td { border-bottom: 0; }
+
+.weak-tag {
+  display: inline-block;
+  margin-left: 0.55rem;
+  padding: 0.08rem 0.48rem;
+  border-radius: 999px;
+  border: 1px solid var(--danger-border);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--danger);
+}
+
+/* ─────────────── limitations ─────────────── */
+
+.limitation-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+.limitation-list li { position: relative; padding-left: 1.15rem; font-size: 0.845rem; line-height: 1.65; color: var(--text-secondary); }
+.limitation-list li::before { content: "—"; position: absolute; left: 0; color: var(--muted); }
+
+/* ─────────────── charts ─────────────── */
+
+.chart { width: 100%; }
+.chart-sm { height: 190px; }
+.chart-lg { height: 250px; margin-top: 0.25rem; }
+
+/* ─────────────── toast ─────────────── */
+
+.toast {
+  position: fixed;
+  right: 1.75rem;
+  bottom: 1.75rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 26rem;
+  padding: 0.8rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: 0.83rem;
+  color: var(--ink);
+}
+
+.toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; }
+.toast-dot.is-danger { background: var(--danger); }
+
+/* ─────────────── responsive floor: 1280px ─────────────── */
+
+@media (max-width: 1400px) {
+  .content { padding: 2rem 2rem 2.25rem; }
+  .hero { grid-template-columns: 220px 1fr; gap: 1.85rem; }
+  .hero-arc { width: 200px; }
+  .gauge-number { font-size: 3.6rem; }
+  .tile-value { font-size: 1.7rem; }
+}
+
+@media (max-width: 1100px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
+  .nav { flex-direction: row; flex-wrap: wrap; }
+  .sidebar-foot { margin: 0; border-top: 0; padding-top: 0; }
+  .hero { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .tile-row, .tile-row-5, .tile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

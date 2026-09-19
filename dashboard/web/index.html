@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigil</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          page: '#0A0F0D', card: '#121816', line: '#222B27',
+          accent: '#35C6D0', ink: '#F2F5F4', secondary: '#9BA5A1', muted: '#667069',
+          success: '#2FBF8F', warn: '#D99827', danger: '#D95361',
+          cpu: '#22B8C3', ram: '#7C70E8', swap: '#D99827', disk: '#DF7B27',
+        },
+        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'] },
+      },
+    },
+  };
+</script>
+
+<!-- ECharts pinned to an exact version: no floating CDN dependency. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
+
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+<div class="backdrop" aria-hidden="true"></div>
+
+<div class="shell">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+        <polygon points="12,1.5 22.46,9.1 18.47,21.4 5.53,21.4 1.54,9.1"/>
+      </svg>
+      <span class="brand-word">Vigil</span>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+      <button type="button" class="nav-item is-active" data-page="overview">
+        <span>Overview</span>
+      </button>
+      <button type="button" class="nav-item" data-page="telemetry">
+        <span>Telemetry</span>
+      </button>
+      <button type="button" class="nav-item" data-page="events">
+        <span>Critical events</span>
+        <span id="eventsBadge" class="nav-badge" hidden>0</span>
+      </button>
+      <button type="button" class="nav-item" data-page="model">
+        <span>Model health</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="sidebar-machine">
+        <span id="statusDot" class="status-dot"></span>
+        <span class="eyebrow">Local machine</span>
+      </div>
+      <div id="monitorState" class="sidebar-state">Monitoring live</div>
+      <div id="machineId" class="sidebar-id mono">—</div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ CONTENT ═══════════════ -->
+  <main class="content">
+
+    <header class="page-header">
+      <div class="min-w-0">
+        <div class="eyebrow">Live system intelligence</div>
+        <h1 class="page-title">Five-minute slowdown forecast</h1>
+      </div>
+      <button id="collectorBtn" type="button" class="btn btn-primary">Start collection</button>
+    </header>
+    <div class="rule"></div>
+
+    <!-- ─────────── OVERVIEW ─────────── -->
+    <section id="page-overview" class="page">
+
+      <!-- Hero: arc left, text right, labelled progress bar -->
+      <article id="hero" class="card hero">
+        <div class="hero-arc">
+          <svg class="gauge" viewBox="0 0 220 220" role="img" aria-labelledby="gaugeTitle">
+            <title id="gaugeTitle">Risk score out of 100</title>
+            <circle cx="110" cy="110" r="90" class="gauge-track" transform="rotate(135 110 110)"/>
+            <circle id="gaugeValue" cx="110" cy="110" r="90" class="gauge-value" transform="rotate(135 110 110)"/>
+          </svg>
+          <div class="gauge-center">
+            <div id="scoreValue" class="gauge-number" aria-live="polite">—</div>
+            <div class="gauge-unit">/ 100</div>
+          </div>
+        </div>
+
+        <div class="hero-body">
+          <div id="statusPill" class="status-pill">Unavailable</div>
+          <div class="eyebrow mt-5">Risk score</div>
+          <h2 class="hero-headline">Slowdown risk for the next five minutes</h2>
+          <p class="hero-note">
+            Risk score for slowdown in the next 5 minutes · not a calibrated probability
+          </p>
+
+          <div class="bar-block">
+            <div class="bar-label">
+              <span class="eyebrow">Score vs alert boundary</span>
+              <span id="boundaryValue" class="bar-value mono">— / 50</span>
+            </div>
+            <div class="bar-track">
+              <div id="scoreBar" class="bar-fill"></div>
+              <span class="bar-tick" style="left:50%"></span>
+            </div>
+          </div>
+
+          <div class="hero-session">
+            <span class="eyebrow">Session</span>
+            <span id="runId" class="mono">—</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Warm-up replaces the hero. A normal state, not an error. -->
+      <article id="warmup" class="card hero" hidden>
+        <div class="hero-arc">
+          <svg class="gauge" viewBox="0 0 220 220" role="img" aria-labelledby="warmupTitle">
+            <title id="warmupTitle">Warm-up progress</title>
+            <circle cx="110" cy="110" r="90" class="gauge-track" transform="rotate(135 110 110)"/>
+            <circle id="warmupArc" cx="110" cy="110" r="90" class="gauge-value is-accent" transform="rotate(135 110 110)"/>
+          </svg>
+          <!-- No number and no status pill here: nothing in this panel may be
+               read as a prediction. The ring alone shows progress; the elapsed
+               seconds are stated in the heading and the labelled bar below. -->
+          <div class="gauge-center">
+            <span class="eyebrow">Warm-up</span>
+          </div>
+        </div>
+
+        <div class="hero-body">
+          <div class="eyebrow">Normal state</div>
+          <h2 id="warmupHeading" class="hero-headline">Model warming up — 0s / 120s</h2>
+          <p class="hero-note">
+            The model needs 120 seconds of uninterrupted measurements before its first
+            prediction. Any gap longer than 10 seconds starts a new segment and resets
+            this counter.
+          </p>
+          <div class="bar-block">
+            <div class="bar-label">
+              <span class="eyebrow">Continuous history</span>
+              <span id="warmupValue" class="bar-value mono">0s / 120s</span>
+            </div>
+            <div class="bar-track"><div id="warmupBar" class="bar-fill is-accent"></div></div>
+          </div>
+          <p id="warmupReason" class="hero-session"></p>
+        </div>
+      </article>
+
+      <!-- Six tiles across -->
+      <div id="overviewTiles" class="tile-row"></div>
+
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Last 10 minutes</h2>
+          <span class="eyebrow">Risk score · system metrics</span>
+        </div>
+        <div id="riskChart" class="chart chart-sm"></div>
+        <div id="metricsChart" class="chart chart-lg"></div>
+        <p id="chartsEmpty" class="empty" hidden>No measurements in this time range yet.</p>
+      </article>
+    </section>
+
+    <!-- ─────────── TELEMETRY ─────────── -->
+    <section id="page-telemetry" class="page" hidden>
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Current measurements</h2>
+          <span id="telemetryStamp" class="eyebrow">—</span>
+        </div>
+        <div id="telemetryTiles" class="tile-grid"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Why this score</h2>
+          <span class="eyebrow">Deviation from each metric's own 120s baseline</span>
+        </div>
+        <div id="drivers" class="driver-list"></div>
+        <p id="driversEmpty" class="empty">Available once the model has warmed up.</p>
+        <p class="card-foot">
+          Provisional explanation. These are the raw metrics furthest from their own recent
+          baseline — they are not the model's own feature attributions.
+        </p>
+      </article>
+    </section>
+
+    <!-- ─────────── CRITICAL EVENTS ─────────── -->
+    <section id="page-events" class="page" hidden>
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Critical events</h2>
+          <span class="eyebrow">Raised when the risk score reaches 50</span>
+        </div>
+        <div id="alerts" class="event-list"></div>
+      </article>
+    </section>
+
+    <!-- ─────────── MODEL HEALTH ─────────── -->
+    <section id="page-model" class="page" hidden>
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Frozen model</h2>
+          <span id="modelPill" class="status-pill is-accent">Prototype</span>
+        </div>
+        <dl id="modelFacts" class="kv-list"></dl>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Final untouched test</h2>
+          <span class="eyebrow">Held-out evaluation</span>
+        </div>
+        <div id="testMetrics" class="tile-row tile-row-5"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2 class="card-title">Per machine</h2>
+          <span class="eyebrow">Evaluation order · nothing filtered</span>
+        </div>
+        <p class="card-sub">
+          Every evaluated machine is listed, in the order produced by the evaluation.
+          Machines where the model performs poorly are shown, not sorted away.
+        </p>
+        <div class="table-wrap">
+          <table class="perf-table">
+            <thead>
+              <tr>
+                <th class="text-left">Machine</th>
+                <th>Rows</th><th>Runs</th><th>Positive rate</th>
+                <th>PR-AUC</th><th>ROC-AUC</th><th>Precision</th><th>Recall</th><th>F1</th>
+              </tr>
+            </thead>
+            <tbody id="byMachine"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card card-quiet">
+        <div class="card-head">
+          <h2 class="card-title">What this system is, and is not</h2>
+        </div>
+        <ul id="limitations" class="limitation-list"></ul>
+        <dl id="contractNotes" class="kv-list kv-tight"></dl>
+      </article>
+    </section>
+
+    <footer class="page-footer">
+      AdoptAI — AH Digital internship · <span id="healthLine" class="mono"></span>
+    </footer>
+  </main>
+</div>
+
+<!-- Toast: reconnect indicator and collector feedback -->
+<div id="toast" class="toast" hidden role="status" aria-live="polite">
+  <span id="toastDot" class="toast-dot"></span>
+  <span id="toastText">Reconnecting…</span>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
