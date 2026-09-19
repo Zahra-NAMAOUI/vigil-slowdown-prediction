@@ -9,6 +9,12 @@ dashboard that serves predictions from frozen artifacts.
 
 ---
 
+
+![Vigil dashboard](docs/images/dash.png)
+
+*Replay mode: a recorded slowdown episode replayed through the live pipeline.*
+
+
 ## The problem
 
 Nothing in raw system metrics tells you a slowdown is coming. The
