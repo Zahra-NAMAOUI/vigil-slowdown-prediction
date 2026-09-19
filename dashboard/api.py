@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,7 @@ from dashboard.inference import InferenceError, load_inference_engine
 from dashboard.live_features import (
     DYNAMIC_METRICS, LiveFeatureError, load_recent_run_history, prepare_current_feature_row,
 )
+from dashboard.replay import ReplayCollector
 
 API_VERSION = "1.0.0"
 WEB_DIR = Path(__file__).resolve().parent / "web"
@@ -57,8 +59,24 @@ METRIC_LABELS: dict[str, tuple[str, str, int]] = {
 }
 
 app = FastAPI(title="Vigil — AdoptAI V1", version=API_VERSION)
-controller = CollectorController(DATABASE_PATH)
 initialize_dashboard_tables(DATABASE_PATH)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# The single mode selection point. Everything downstream — every endpoint, the
+# feature engineering, the model — is identical in both modes and never asks
+# which one is active. Replay only changes where the raw rows come from.
+# ─────────────────────────────────────────────────────────────────────────────
+VIGIL_MODE = os.environ.get("VIGIL_MODE", "live").strip().lower()
+if VIGIL_MODE not in {"live", "replay"}:
+    VIGIL_MODE = "live"
+
+if VIGIL_MODE == "replay":
+    controller: object = ReplayCollector(DATABASE_PATH)
+    mode_detail = controller.source_info
+    controller.start()          # a visitor must find the episode already playing
+else:
+    controller = CollectorController(DATABASE_PATH)
+    mode_detail = lambda: None  # noqa: E731 — keeps the branch to this one block
 
 
 def _number(value: Any) -> float | None:
@@ -269,6 +287,8 @@ def health() -> dict[str, Any]:
         model_ready, model_error = False, str(exc)
     return {
         "status": "ok" if model_ready and DATABASE_PATH.exists() else "degraded",
+        "mode": VIGIL_MODE,
+        "replay": mode_detail(),
         "model_ready": model_ready,
         "model_error": model_error,
         "database_reachable": DATABASE_PATH.exists(),

@@ -55,6 +55,7 @@ const state = {
   historyTimer: null,
   collectorBusy: false,
   lastCollector: null,
+  mode: 'live',          // set once from /api/health; never inferred elsewhere
   page: 'overview',
   riskChart: null,
   metricsChart: null,
@@ -301,7 +302,9 @@ function renderCollector(collector, alerting) {
   else if (collector.state === 'Starting') dot.classList.add('is-starting');
   else if (collector.state === 'Error') dot.classList.add('is-error');
 
-  $('monitorState').textContent = COLLECTOR_STATE_TEXT[collector.state] || collector.state;
+  $('monitorState').textContent = (state.mode === 'replay' && collector.running)
+    ? 'Replay session'
+    : (COLLECTOR_STATE_TEXT[collector.state] || collector.state);
   setIdField($('machineId'), collector.machine_id);
   setIdField($('runId'), collector.run_id);
 
@@ -594,8 +597,20 @@ function renderModel(model) {
 }
 
 function renderHealth(health) {
+  state.mode = health.mode || 'live';
+  const replay = state.mode === 'replay' ? health.replay : null;
+
+  $('replayBadge').hidden = !replay;
+  $('replaySource').hidden = !replay;
+  if (replay) {
+    $('replaySource').textContent =
+      `Recorded episode replayed through the live pipeline — source run ${shortId(replay.source_run_id, 13)}`
+      + ` · ${fmt(replay.rows, 0)} samples at ${fmt(replay.interval_seconds, 0)}s`;
+    $('replaySource').title = replay.source_run_id;
+  }
+
   $('healthLine').textContent =
-    `model ${health.model_ready ? 'ready' : 'unavailable'} · database ${health.database_reachable ? 'reachable' : 'unreachable'} · api ${health.api_version}`;
+    `mode ${state.mode} · model ${health.model_ready ? 'ready' : 'unavailable'} · database ${health.database_reachable ? 'reachable' : 'unreachable'} · api ${health.api_version}`;
 }
 
 /* ═══════════ polling ═══════════ */
