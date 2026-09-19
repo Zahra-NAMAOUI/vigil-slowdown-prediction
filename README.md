@@ -7,9 +7,6 @@ It covers the full chain: a collection agent, a labeling rule, a
 time-series feature pipeline, a trained model, and a real-time
 dashboard that serves predictions from frozen artifacts.
 
-Internal project name: **AdoptAI** — internship at AH Digital,
-Technopark Agadir, 2026.
-
 ---
 
 ## The problem
